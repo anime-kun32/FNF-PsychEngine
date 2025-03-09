@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  buildHTML5:
+  buildLinux:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,23 +18,91 @@ jobs:
         with:
           haxe-version: 4.3.4
 
-      - name: Install Haxelib Dependencies
+      - name: Install Haxelib and Capture Errors
         run: |
-          sudo apt-get install libvlc-dev libvlccore-dev
+          haxelib setup ~/haxelib 2> haxelib-errors.log
+          haxelib install hxcpp 2>> haxelib-errors.log
+          haxelib install lime 2>> haxelib-errors.log
+          haxelib install openfl 2>> haxelib-errors.log
+          haxelib install flixel 2>> haxelib-errors.log
+          haxelib install flixel-tools 2>> haxelib-errors.log
+          haxelib install flixel-ui 2>> haxelib-errors.log
+          haxelib install hscript 2>> haxelib-errors.log
+          haxelib install newgrounds 2>> haxelib-errors.log
+          haxelib install hxCodec 2>> haxelib-errors.log
+          haxelib install grig.audio 2>> haxelib-errors.log
+          haxelib install funkin.vis 2>> haxelib-errors.log
+          haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc 2>> haxelib-errors.log
+          haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit 2>> haxelib-errors.log
+
+      - name: Upload Haxelib Error Log
+        uses: actions/upload-artifact@v4.3.4
+        with:
+          name: haxelib-errors
+          path: haxelib-errors.log
+        if: always()  # Ensure this step runs even if the job fails
+
+      - name: Compile HTML5 Build
+        run: |
+          haxelib run lime build html5 --app-version="4.0.0-${{ github.run_id }}" -D officialBuild
+
+      - name: Upload HTML5 Build Artifact
+        uses: actions/upload-artifact@v4.3.4
+        with:
+          name: html5Build
+          path: export/release/html5
+        if: always()  # Ensure this step runs even if the job fails
+
+  buildWindows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4.1.7
+
+      - uses: krdlab/setup-haxe@master
+        with:
+          haxe-version: 4.3.4
+
+      - name: Install Haxelib
+        run: |
+          haxelib setup C:/haxelib
+          haxelib install hxcpp > /dev/null --quiet
+          .\"setup/windows.bat"
+        shell: cmd
+
+      - name: Skip SScript setup mode
+        run: echo 'oy9:showMacroty8:loopCosti25y10:includeAllfg' >> %USERPROFILE%/settings.cocoa
+        shell: cmd
+
+      - name: Create Version Tag
+        run: echo "${{github.run_id}}" > VERSION
+
+      - name: Compile Windows Build
+        run: haxelib run lime build windows --app-version="4.0.0-${{ github.run_id }}" -D officialBuild
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v4.3.4
+        with:
+          name: windowsBuild
+          path: export/release/windows/bin
+        if: always()  # Ensure this step runs even if the job fails
+          
+  buildMac:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4.1.7
+
+      - uses: krdlab/setup-haxe@master
+        with:
+          haxe-version: 4.3.4
+
+      - name: Install Haxelib
+        run: |
           haxelib setup ~/haxelib
           haxelib install hxcpp > /dev/null --quiet
-          haxelib install lime
-          haxelib install openfl
-          haxelib install flixel
-          haxelib install flixel-tools
-          haxelib install flixel-ui
-          haxelib install hscript
-          haxelib install newgrounds
-          haxelib install hxCodec
-          haxelib install grig.audio  # Previously missing dependency
-          haxelib install funkin.vis  # Fix for current error
-          haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
-          haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit
+          chmod +x ./setup/unix.sh
+          sh ./setup/unix.sh
 
       - name: Skip SScript setup mode
         run: echo 'oy9:showMacroty8:loopCosti25y10:includeAllfg' >> ~/settings.cocoa
@@ -42,11 +110,12 @@ jobs:
       - name: Create Version Tag
         run: echo "${{github.run_id}}" > VERSION
 
-      - name: Compile HTML5 Build
-        run: haxelib run lime build html5 --app-version="4.0.0-${{ github.run_id}}" -D officialBuild
+      - name: Compile Mac Build
+        run: haxelib run lime build mac --app-version="4.0.0-${{ github.run_id }}" -D officialBuild
 
-      - name: Publish HTML5 Artifact
+      - name: Publish Artifact
         uses: actions/upload-artifact@v4.3.4
         with:
-          name: html5Build
-          path: export/release/html5/bin/
+          name: macBuild
+          path: export/release/macos/bin
+        if: always()  # Ensure this step runs even if the job fails
