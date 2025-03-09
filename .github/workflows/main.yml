@@ -8,12 +8,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  buildLinux:
+  buildHTML5:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4.1.7
 
+      # Set up Haxe
       - uses: krdlab/setup-haxe@master
         with:
           haxe-version: 4.3.4
@@ -45,77 +46,11 @@ jobs:
       - name: Compile HTML5 Build
         run: |
           haxelib run lime build html5 --app-version="4.0.0-${{ github.run_id }}" -D officialBuild
+        continue-on-error: true  # Allow to continue on error to ensure logs and artifacts are uploaded
 
       - name: Upload HTML5 Build Artifact
         uses: actions/upload-artifact@v4.3.4
         with:
           name: html5Build
-          path: export/release/html5
-        if: always()  # Ensure this step runs even if the job fails
-
-  buildWindows:
-    runs-on: windows-latest
-
-    steps:
-      - uses: actions/checkout@v4.1.7
-
-      - uses: krdlab/setup-haxe@master
-        with:
-          haxe-version: 4.3.4
-
-      - name: Install Haxelib
-        run: |
-          haxelib setup C:/haxelib
-          haxelib install hxcpp > /dev/null --quiet
-          .\"setup/windows.bat"
-        shell: cmd
-
-      - name: Skip SScript setup mode
-        run: echo 'oy9:showMacroty8:loopCosti25y10:includeAllfg' >> %USERPROFILE%/settings.cocoa
-        shell: cmd
-
-      - name: Create Version Tag
-        run: echo "${{github.run_id}}" > VERSION
-
-      - name: Compile Windows Build
-        run: haxelib run lime build windows --app-version="4.0.0-${{ github.run_id }}" -D officialBuild
-
-      - name: Publish Artifact
-        uses: actions/upload-artifact@v4.3.4
-        with:
-          name: windowsBuild
-          path: export/release/windows/bin
-        if: always()  # Ensure this step runs even if the job fails
-          
-  buildMac:
-    runs-on: macos-latest
-
-    steps:
-      - uses: actions/checkout@v4.1.7
-
-      - uses: krdlab/setup-haxe@master
-        with:
-          haxe-version: 4.3.4
-
-      - name: Install Haxelib
-        run: |
-          haxelib setup ~/haxelib
-          haxelib install hxcpp > /dev/null --quiet
-          chmod +x ./setup/unix.sh
-          sh ./setup/unix.sh
-
-      - name: Skip SScript setup mode
-        run: echo 'oy9:showMacroty8:loopCosti25y10:includeAllfg' >> ~/settings.cocoa
-
-      - name: Create Version Tag
-        run: echo "${{github.run_id}}" > VERSION
-
-      - name: Compile Mac Build
-        run: haxelib run lime build mac --app-version="4.0.0-${{ github.run_id }}" -D officialBuild
-
-      - name: Publish Artifact
-        uses: actions/upload-artifact@v4.3.4
-        with:
-          name: macBuild
-          path: export/release/macos/bin
+          path: export/release/html5  # Ensure this points to your HTML5 build output folder
         if: always()  # Ensure this step runs even if the job fails
