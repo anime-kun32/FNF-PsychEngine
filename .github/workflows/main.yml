@@ -1,36 +1,24 @@
-name: Build FNF Psych Engine for HTML5
+name: Convert Tags to Branches
 
 on:
-  push:
-    branches: [ main, experimental ]
-  pull_request:
-    branches: [ main, experimental ]
   workflow_dispatch:
 
+permissions:
+  contents: write  # Allows pushing branches
+
 jobs:
-  build:
+  convert:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Install Haxe
-        uses: krdlab/setup-haxe@master
         with:
-          haxe-version: 4.3.4
+          fetch-depth: 0  # Ensures all tags are fetched
 
-      - name: Make `setup.sh` Executable
-        run: chmod +x setup.sh
-
-      - name: Run Setup Script
-        run: ./setup.sh
-
-      - name: Compile to HTML5
-        run: haxelib run lime build html5 -D officialBuild -D HXCPP_NO_THREADS
-
-      - name: Upload HTML5 Build
-        uses: actions/upload-artifact@v4
-        with:
-          name: fnf-html5-build
-          path: export/release/html5/bin
+      - name: Convert Tags to Branches
+        run: |
+          git tag | while read TAG_NAME; do
+            echo "Processing tag: $TAG_NAME"
+            git branch "$TAG_NAME" "refs/tags/$TAG_NAME"
+            git push origin "$TAG_NAME"
+          done
