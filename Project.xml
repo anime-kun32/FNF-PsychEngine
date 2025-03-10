@@ -27,8 +27,13 @@
 	<define name="DISCORD_ALLOWED" />
 	<define name="TRANSLATIONS_ALLOWED" />
 	<define name="IRIS_DEBUG"/>
-	
-	<define name="MULTITHREADED_LOADING" /> <!-- UNCOMMENTING THIS LINE WILL ENABLE MULTITHREADED LOADING, WHICH IMPROVES LOADING TIMES, BUT WITH A LOW CHANCE FOR THE GAME FREEZE ON SONG LOAD -->
+	<!-- For Desktop, enable multithreaded loading -->
+<define name="MULTITHREADED_LOADING" if="desktop"/>
+
+<!-- Optionally, disable it for other platforms -->
+<define name="MULTITHREADED_LOADING" if="html5" value="false"/>
+<define name="MULTITHREADED_LOADING" if="mobile" value="false"/>
+ <!-- UNCOMMENTING THIS LINE WILL ENABLE MULTITHREADED LOADING, WHICH IMPROVES LOADING TIMES, BUT WITH A LOW CHANCE FOR THE GAME FREEZE ON SONG LOAD -->
 	<define name="SHOW_LOADING_SCREEN" />
 	<define name="PSYCH_WATERMARKS"/> <!-- DELETE THIS TO REMOVE THE PSYCH LOGO FROM LOADING SCREEN -->
 
