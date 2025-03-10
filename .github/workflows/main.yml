@@ -1,4 +1,4 @@
-name: Build
+name: Build FNF Psych Engine for HTML5
 
 on:
   push:
@@ -8,49 +8,29 @@ on:
   workflow_dispatch:
 
 jobs:
-  buildHTML5:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4.1.7
+      - name: Checkout Repository
+        uses: actions/checkout@v4.1.7
 
-      # Set up Haxe
-      - uses: krdlab/setup-haxe@master
+      - name: Install Haxe
+        uses: krdlab/setup-haxe@master
         with:
           haxe-version: 4.3.4
 
-      - name: Install Haxelib and Capture Errors
-        run: |
-          haxelib setup ~/haxelib 2> haxelib-errors.log
-          haxelib install hxcpp 2>> haxelib-errors.log
-          haxelib install lime 2>> haxelib-errors.log
-          haxelib install openfl 2>> haxelib-errors.log
-          haxelib install flixel 2>> haxelib-errors.log
-          haxelib install flixel-tools 2>> haxelib-errors.log
-          haxelib install flixel-ui 2>> haxelib-errors.log
-          haxelib install hscript 2>> haxelib-errors.log
-          haxelib install newgrounds 2>> haxelib-errors.log
-          haxelib install hxCodec 2>> haxelib-errors.log
-          haxelib install grig.audio 2>> haxelib-errors.log
-          haxelib install funkin.vis 2>> haxelib-errors.log
-          haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc 2>> haxelib-errors.log
-          haxelib git linc_luajit https://github.com/nebulazorua/linc_luajit 2>> haxelib-errors.log
+      - name: Give Execute Permission to Setup Script
+        run: chmod +x setup.sh
 
-      - name: Upload Haxelib Error Log
+      - name: Run Setup Script
+        run: ./setup.sh
+
+      - name: Compile to HTML5
+        run: haxelib run lime build html5 -D officialBuild
+
+      - name: Upload HTML5 Build
         uses: actions/upload-artifact@v4.3.4
         with:
-          name: haxelib-errors
-          path: haxelib-errors.log
-        if: always()  # Ensure this step runs even if the job fails
-
-      - name: Compile HTML5 Build
-        run: |
-          haxelib run lime build html5 --app-version="4.0.0-${{ github.run_id }}" -D officialBuild
-        continue-on-error: true  # Allow to continue on error to ensure logs and artifacts are uploaded
-
-      - name: Upload HTML5 Build Artifact
-        uses: actions/upload-artifact@v4.3.4
-        with:
-          name: html5Build
-          path: export/release/html5  # Ensure this points to your HTML5 build output folder
-        if: always()  # Ensure this step runs even if the job fails
+          name: fnf-html5-build
+          path: export/release/html5/bin
