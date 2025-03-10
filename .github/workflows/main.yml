@@ -27,7 +27,7 @@ jobs:
         run: ./setup.sh
 
       - name: Compile to HTML5
-        run: haxelib run lime build html5 -D officialBuild -D js
+        run: haxelib run lime build html5 -D officialBuild
 
       - name: Upload HTML5 Build
         uses: actions/upload-artifact@v4
