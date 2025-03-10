@@ -20,8 +20,8 @@ jobs:
           git tag | while read TAG_NAME; do
             echo "Processing tag: $TAG_NAME"
 
-            # Get the exact commit hash of the tag
-            COMMIT_HASH=$(git show-ref --tags -d | grep "refs/tags/$TAG_NAME$" | awk '{print $1}')
+            # Get the exact commit hash of the tag (avoiding duplicates)
+            COMMIT_HASH=$(git rev-list -n 1 "$TAG_NAME")
 
             # If no commit hash is found, skip
             if [ -z "$COMMIT_HASH" ]; then
