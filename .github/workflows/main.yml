@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write  # Allows creating and pushing branches
+  contents: write  # Allows pushing branches
 
 jobs:
   convert:
@@ -13,15 +13,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetches all tags
+          fetch-depth: 0  # Ensures all tags are fetched
 
       - name: Convert Tags to Branches
         run: |
           git tag | while read TAG_NAME; do
             echo "Processing tag: $TAG_NAME"
-            
+
             # Get the exact commit hash of the tag
-            COMMIT_HASH=$(git rev-parse "$TAG_NAME")
+            COMMIT_HASH=$(git show-ref --tags -d | grep "refs/tags/$TAG_NAME$" | awk '{print $1}')
+
+            # If no commit hash is found, skip
+            if [ -z "$COMMIT_HASH" ]; then
+              echo "No commit found for tag $TAG_NAME, skipping..."
+              continue
+            fi
 
             # Ensure the branch doesn't already exist
             if git show-ref --verify --quiet "refs/heads/$TAG_NAME"; then
