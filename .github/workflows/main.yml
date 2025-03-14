@@ -14,10 +14,20 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up Haxe
-      uses: HaxeFoundation/haxe-action@v1
-      with:
-        haxe-version: 4.2.5
+    - name: Install Haxe 4.2.5
+      run: |
+        wget -q https://github.com/HaxeFoundation/haxe/releases/download/4.2.5/haxe-4.2.5-linux64.tar.gz
+        tar -xf haxe-4.2.5-linux64.tar.gz
+        sudo mv haxe_4.2.5 /usr/local/haxe
+        echo "export PATH=/usr/local/haxe/bin:$PATH" >> $HOME/.bashrc
+        echo "export PATH=/usr/local/haxe/bin:$PATH" >> $HOME/.profile
+        source $HOME/.bashrc
+        haxe --version  # Verify installation
+
+    - name: Set up Haxelib
+      run: |
+        mkdir -p ~/haxelib
+        haxelib setup ~/haxelib
 
     - name: Install dependencies
       run: |
