@@ -18,10 +18,10 @@ jobs:
       run: |
         wget -q https://github.com/HaxeFoundation/haxe/releases/download/4.2.5/haxe-4.2.5-linux64.tar.gz
         tar -xf haxe-4.2.5-linux64.tar.gz
-        sudo mv haxe_4.2.5 /usr/local/haxe
+        sudo mv haxe_4.2.5-linux64 /usr/local/haxe
         echo "export PATH=/usr/local/haxe/bin:$PATH" >> $HOME/.bashrc
         echo "export PATH=/usr/local/haxe/bin:$PATH" >> $HOME/.profile
-        source $HOME/.bashrc
+        export PATH=/usr/local/haxe/bin:$PATH
         haxe --version  # Verify installation
 
     - name: Set up Haxelib
@@ -40,7 +40,7 @@ jobs:
         haxelib install hxvlc 2.0.1 --skip-dependencies
         haxelib install lime 8.1.2
         haxelib install openfl 9.3.3
-        haxelib git flxanimate https://github.com/Dot-Stuff/flxanimate 768740a56b26aa0c072720e0d1236b94afe68e3e
+        haxelib git flxanimate https://github.com/Dot-Stuff/flxanimate 76874068e3e
         haxelib git funkin.vis https://github.com/FunkinCrew/funkVis 22b1ce089dd924f15cdc4632397ef3504d464e90
         haxelib git grig.audio https://gitlab.com/haxe-grig/grig.audio.git cbf91e2180fd2e374924fe74844086aab7891666
 
