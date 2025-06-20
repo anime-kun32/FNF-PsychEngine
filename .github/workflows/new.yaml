@@ -48,7 +48,7 @@ jobs:
           )
 
       - name: Build HTML5 (release + verbose)
-        run: haxelib run lime test html5  -verbose
+        run: haxelib run lime build html5  -verbose
 
       - name: Upload HTML5 Build
         uses: actions/upload-artifact@v4
