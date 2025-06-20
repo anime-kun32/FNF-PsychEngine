@@ -34,6 +34,10 @@ jobs:
           haxelib install hscript 2.4.0
           haxelib install hxcodec 2.5.1
 
+      
+      - name: Set up Lime
+        run: haxelib run lime setup
+  
       - name: Build HTML5
         run: lime test html5
 
