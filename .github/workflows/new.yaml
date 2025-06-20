@@ -16,8 +16,8 @@ jobs:
       - name: Checkout tag 0.6.2
         run: git checkout tags/0.6.2
 
-      - name: Install Haxe
-        uses: HaxeFoundation/haxe-action@v2
+      - name: Set up Haxe 4.2.2
+        uses: krdlab/setup-haxe@v1
         with:
           haxe-version: '4.2.2'
 
