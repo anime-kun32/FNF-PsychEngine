@@ -38,7 +38,7 @@ jobs:
           haxelib run lime setup
 
       - name: Build HTML5
-        run: haxelib run lime test html5
+        run: haxelib run lime test html5 -debug
 
       - name: Upload HTML5 Build
         uses: actions/upload-artifact@v4
