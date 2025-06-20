@@ -32,7 +32,7 @@ jobs:
           haxelib install tjson 1.4.0
           haxelib install hxjsonast 1.1.0
           haxelib install hscript 2.4.0
-          haxelib install hxxodec 2.5.1
+          haxelib install hxodec 2.5.1
           haxelib run lime setup
           haxelib run flixel-tools setup
 
