@@ -11,7 +11,7 @@ jobs:
       - name: Checkout code (with tags)
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # fetch full history including tags
+          fetch-depth: 0
 
       - name: Checkout tag 0.6.2
         run: git checkout tags/0.6.2
@@ -24,7 +24,9 @@ jobs:
       - name: Install required haxelibs
         run: |
           haxelib install lime 7.9.0
+          haxelib set lime 7.9.0
           haxelib install openfl 9.1.0
+          haxelib set openfl 9.1.0
           haxelib install flixel 4.9.0
           haxelib install flixel-addons 3.2.2
           haxelib install flixel-ui 2.3.3
@@ -33,13 +35,10 @@ jobs:
           haxelib install hxjsonast 1.1.0
           haxelib install hscript 2.4.0
           haxelib install hxcodec 2.5.1
+          haxelib run lime setup
 
-      
-      - name: Set up Lime
-        run: haxelib run lime setup
-  
       - name: Build HTML5
-        run: lime test html5
+        run: haxelib run lime test html5
 
       - name: Upload HTML5 Build
         uses: actions/upload-artifact@v4
