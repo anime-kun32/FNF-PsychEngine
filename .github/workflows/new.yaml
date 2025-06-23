@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 0
 
       - name: Checkout tag 0.6.2
-        run: git checkout tags/0.7.0
+        run: git checkout tags/0.7
 
       - name: Set up Haxe 4.2.2
         uses: krdlab/setup-haxe@v1
